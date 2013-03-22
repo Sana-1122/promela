@@ -9,5 +9,5 @@ of the consumer.
 
 The output from the promela version should be something like the EPOS version.
 However, instead of lower case characters, the consumer should print numbers
-from 0 to 15.
+from 900 to 915.
 
