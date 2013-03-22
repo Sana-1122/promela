@@ -1,0 +1,13 @@
+From the original EPOS C++ application:
+
+PPaPbPcPdPePfPgPhPiPjPkPlPmPnPoPPpaPbPcPdPePfPgPhPiPjPkPlPmPnPoPPpaPbPcPdPePfPgP
+hPiPjPkPlPmPnPoPPpaPbPcPdPePfPgPhPiPjPkPlPmPnPoPPpaPbPcPdPePfPgPhPiPjPkPlPmPnPoP
+PpaPbPcPdPePfPgPhPiPjPkPlPmPnPoPPpaPbPcdThe last thread has exited!
+
+Here "P" means the execution of the producer and "a" to "p" means the execution
+of the consumer.
+
+The output from the promela version should be something like the EPOS version.
+However, instead of lower case characters, the consumer should print numbers
+from 0 to 15.
+

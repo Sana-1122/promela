@@ -18,8 +18,8 @@ proctype Producer()
              :: empty_slot > 0 -> empty_slot = empty_slot - 1;
          fi
      }
- 	:: printf("P");
-	:: buffer[input] = 'a' + input;
+ 	:: printf("P\n");
+	:: buffer[input] = input;
 	:: input = (input + 1) % BUF_SIZE;
 	:: atomic {full_slot = full_slot + 1;}
     :: i++;
@@ -42,7 +42,7 @@ proctype Consumer()
              :: full_slot > 0 -> full_slot = full_slot - 1;
          fi
      }
-    :: printf("%i", buffer[output]);
+    :: printf("%d\n", buffer[output]);
     :: output = (output + 1) % BUF_SIZE;
     :: atomic {empty_slot = empty_slot + 1;}
     :: i++;
@@ -55,7 +55,7 @@ proctype Consumer()
 
 init
 {
-    int producer_id = run Producer();
-    int consumer_id = run Consumer();
+    run Producer();
+    run Consumer();
 }
 
