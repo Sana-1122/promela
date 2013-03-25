@@ -1,4 +1,4 @@
-#define iteractions 100
+#define iterations 100
 #define BUF_SIZE 16
 
 int buffer[BUF_SIZE];
@@ -11,7 +11,7 @@ proctype Producer()
     int input = 0;
 
     int i;
-    for (i : 0 .. iteractions)
+    for (i : 0 .. iterations)
     {
         d_step
         {
@@ -33,7 +33,7 @@ proctype Consumer()
     int output = 0;
 
     int i;
-    for (i : 0 .. iteractions)
+    for (i : 0 .. iterations)
     {
         d_step
         {
