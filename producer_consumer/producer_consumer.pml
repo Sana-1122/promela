@@ -48,9 +48,24 @@ proctype Consumer()
     printf("\nConsumer terminating...\n");
 }
 
+proctype Monitor()
+{
+    assert(empty_slot >= 0 && empty_slot <= BUF_SIZE);
+    assert(full_slot >= 0 && full_slot <= BUF_SIZE);
+    /*
+    assert(empty_slot + full_slot == BUF_SIZE);
+    assert(empty_slot == BUF_SIZE - full_slot);
+    assert(full_slot == BUF_SIZE - empty_slot);
+    */
+}
+
 init
 {
-    run Producer();
-    run Consumer();
+    atomic
+    {
+        run Producer();
+        run Consumer();
+        run Monitor();
+    }
 }
 
