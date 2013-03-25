@@ -48,6 +48,10 @@ proctype Consumer()
     printf("\nConsumer terminating...\n");
 }
 
+/*
+ltl { eventually(full_slot == BUF_SIZE) }
+*/
+
 proctype Monitor()
 {
     assert(empty_slot >= 0 && empty_slot <= BUF_SIZE);
