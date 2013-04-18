@@ -39,10 +39,10 @@ proctype Semaphore(int id; int initial_value)
                     :: (count <= 0) ->
                      count --;
                      if
-                         :: (queue_index < queue_size) ->
+                         :: (queue_index < WAITING_QUEUE_SIZE) ->
                           waiting_queue[queue_index] = process_id;
                           queue_index ++;
-                         :: (queue_index >= queue_size) -> 
+                         :: else -> 
                           printf("/nSemaphore waiting queue overflow!/n");
                      fi
                 fi
@@ -55,7 +55,7 @@ proctype Semaphore(int id; int initial_value)
                          :: (queue_index > 0) ->
                           sem[id].proc!go(waiting_queue[queue_index-1])
                           queue_index --;
-                         :: (queue_index <= 0) ->
+                         :: else ->
                           printf("/nSemaphore underflow/n");
                      fi
                     :: (count >= 0) ->
