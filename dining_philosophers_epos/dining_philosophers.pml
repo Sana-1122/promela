@@ -11,7 +11,7 @@ typedef Semaphore_Channel
     chan proc = [0] of { int, int }
 };
 
-Semaphore_Chanell sem[NUM_SEMAPHORES];
+Semaphore_Channel sem[NUM_SEMAPHORES];
 
 #define p 16
 #define v 22
@@ -20,48 +20,48 @@ Semaphore_Chanell sem[NUM_SEMAPHORES];
 /*
  * This semaphore allows having a count bigger than the initial value
 */ 
-proctype Semaphore(int id, int queue_size, int initial_value) 
+proctype Semaphore(int id; int initial_value) 
 {
-    assert(inital_value >= 0);
+    assert(initial_value >= 0);
     
-    int waiting_queue[queue_size];
+    int waiting_queue[WAITING_QUEUE_SIZE];
     int queue_index = 0;
     int count = initial_value;
     int process_id;
 
     do
-        if
-            ::(sem[id].proc?p(process_id)) ->
-             if
-                 ::(count > 0) ->
-                  count --;
-                  sem[id].proc!go(process_id);
-                 ::(count <= 0) ->
-                  count --;
-                  if
-                      ::(queue_index < queue_size)
-                       waiting_queue[queue_index] = process_id;
-                       queue_index ++;
-                      ::(queue_index >= queue_size)
-                       printf("/nSemaphore waiting queue overflow!/n");
-                  fi
-             fi
+        ::if
+              ::(sem[id].proc?p(process_id)) ->
+               if
+                   ::(count > 0) ->
+                    count --;
+                    sem[id].proc!go(process_id);
+                   ::(count <= 0) ->
+                    count --;
+                    if
+                        ::(queue_index < queue_size)
+                         waiting_queue[queue_index] = process_id;
+                         queue_index ++;
+                        ::(queue_index >= queue_size)
+                         printf("/nSemaphore waiting queue overflow!/n");
+                    fi
+               fi
              
-            :: (sem[id].proc?v(process_id)) ->
-             if
-                 ::(count < 0) ->
-                  count ++;
-                  if
-                      ::(queue_index > 0)
-                       sem[id].proc!go(waiting_queue[queue_index-1])
-                       queue_index --;
-                      ::(queue_index <= 0)
-                       printf("/nSemaphore underflow/n");
-                  fi
-                 ::(count >= 0) ->
-                  count ++;
-             fi
-        fi
+              :: (sem[id].proc?v(process_id)) ->
+               if
+                   ::(count < 0) ->
+                    count ++;
+                    if
+                        ::(queue_index > 0)
+                         sem[id].proc!go(waiting_queue[queue_index-1])
+                         queue_index --;
+                        ::(queue_index <= 0)
+                         printf("/nSemaphore underflow/n");
+                    fi
+                   ::(count >= 0) ->
+                    count ++;
+               fi
+         fi
     od
 }
 
@@ -79,9 +79,15 @@ proctype Philosopher(int n)
     {
         printf("thinking");
 
-        first = (n < NUM_PHILOSOPHERS - 1)? n : 0;
-        second = (n < NUM_PHILOSOPHERS - 1)? n + 1 : 4; 
-        
+        if
+            ::(n < NUM_PHILOSOPHERS - 1) ->
+             first = n;
+             second = n + 1;
+            ::else ->
+             first = 0;
+             second = NUM_PHILOSOPHERS - 1;
+        fi
+
         sem[first].proc!p(n);
         sem[first].proc?go(n);
         sem[second].proc!p(n);
@@ -94,6 +100,7 @@ proctype Philosopher(int n)
     }
     
     printf("\ndone\n");
+    printf("Philosopher %n ate %n times\n", n, i);
 }
 
 /*
@@ -102,24 +109,17 @@ ltl { eventually(full_slot == BUF_SIZE) }
 
 proctype Monitor()
 {
-    assert(empty_slot >= 0 && empty_slot <= BUF_SIZE);
-    assert(full_slot >= 0 && full_slot <= BUF_SIZE);
-    /*
-    assert(empty_slot + full_slot == BUF_SIZE);
-    assert(empty_slot == BUF_SIZE - full_slot);
-    assert(full_slot == BUF_SIZE - empty_slot);
-    */
 }
 
 init
 {
     atomic
     {
-        sem[0] = Semaphore(0, WAITING_QUEUE_SIZE, 1);
-        sem[1] = Semaphore(1, WAITING_QUEUE_SIZE, 1);
-        sem[2] = Semaphore(2, WAITING_QUEUE_SIZE, 1);
-        sem[3] = Semaphore(3, WAITING_QUEUE_SIZE, 1);
-        sem[4] = Semaphore(4, WAITING_QUEUE_SIZE, 1);
+        sem[0] = Semaphore(0, 1);
+        sem[1] = Semaphore(1, 1);
+        sem[2] = Semaphore(2, 1);
+        sem[3] = Semaphore(3, 1);
+        sem[4] = Semaphore(4, 1);
         
         run Philosopher(0);
         run Philosopher(1);
