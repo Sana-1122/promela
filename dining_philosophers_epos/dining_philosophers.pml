@@ -8,7 +8,7 @@
 /* Semaphore */
 typedef Semaphore_Channel
 {
-    chan proc = [0] of { int, int }
+    chan proc = [0] of { int, int };
 };
 
 Semaphore_Channel sem[NUM_SEMAPHORES];
@@ -30,37 +30,37 @@ proctype Semaphore(int id; int initial_value)
     int process_id;
 
     do
-        ::if
-              ::(sem[id].proc?p(process_id)) ->
-               if
-                   ::(count > 0) ->
-                    count --;
-                    sem[id].proc!go(process_id);
-                   ::(count <= 0) ->
-                    count --;
-                    if
-                        ::(queue_index < queue_size)
-                         waiting_queue[queue_index] = process_id;
-                         queue_index ++;
-                        ::(queue_index >= queue_size)
-                         printf("/nSemaphore waiting queue overflow!/n");
-                    fi
-               fi
+        :: if
+               :: ( sem[id].proc?p(process_id) ) ->                
+                if
+                    :: (count > 0) ->
+                     count --;
+                     sem[id].proc!go(process_id);
+                    :: (count <= 0) ->
+                     count --;
+                     if
+                         :: (queue_index < queue_size) ->
+                          waiting_queue[queue_index] = process_id;
+                          queue_index ++;
+                         :: (queue_index >= queue_size) -> 
+                          printf("/nSemaphore waiting queue overflow!/n");
+                     fi
+                fi
              
-              :: (sem[id].proc?v(process_id)) ->
-               if
-                   ::(count < 0) ->
-                    count ++;
-                    if
-                        ::(queue_index > 0)
-                         sem[id].proc!go(waiting_queue[queue_index-1])
-                         queue_index --;
-                        ::(queue_index <= 0)
-                         printf("/nSemaphore underflow/n");
-                    fi
-                   ::(count >= 0) ->
-                    count ++;
-               fi
+               :: ( sem[id].proc?v(process_id) ) ->
+                if
+                    :: (count < 0) ->
+                     count ++;
+                     if
+                         :: (queue_index > 0) ->
+                          sem[id].proc!go(waiting_queue[queue_index-1])
+                          queue_index --;
+                         :: (queue_index <= 0) ->
+                          printf("/nSemaphore underflow/n");
+                     fi
+                    :: (count >= 0) ->
+                     count ++;
+                fi
          fi
     od
 }
@@ -80,10 +80,10 @@ proctype Philosopher(int n)
         printf("thinking");
 
         if
-            ::(n < NUM_PHILOSOPHERS - 1) ->
+            :: (n < NUM_PHILOSOPHERS - 1) ->
              first = n;
              second = n + 1;
-            ::else ->
+            :: else ->
              first = 0;
              second = NUM_PHILOSOPHERS - 1;
         fi
@@ -109,6 +109,7 @@ ltl { eventually(full_slot == BUF_SIZE) }
 
 proctype Monitor()
 {
+    skip;
 }
 
 init
