@@ -31,7 +31,7 @@ proctype Semaphore(int id; int initial_value)
 
     do
         :: if
-               :: ( sem[id].proc?p(process_id) ) ->                
+               :: ( 99 /* sem[id].proc?p(process_id) */ ) ->                
                 if
                     :: (count > 0) ->
                      count --;
@@ -44,24 +44,24 @@ proctype Semaphore(int id; int initial_value)
                           queue_index ++;
                          :: else -> 
                           printf("/nSemaphore waiting queue overflow!/n");
-                     fi
-                fi
+                     fi;
+                fi;
              
-               :: ( sem[id].proc?v(process_id) ) ->
+               :: ( 88 /* sem[id].proc?v(process_id) */ ) ->
                 if
                     :: (count < 0) ->
                      count ++;
                      if
                          :: (queue_index > 0) ->
-                          sem[id].proc!go(waiting_queue[queue_index-1])
+                          sem[id].proc!go(waiting_queue[queue_index-1]);
                           queue_index --;
                          :: else ->
                           printf("/nSemaphore underflow/n");
-                     fi
+                     fi;
                     :: (count >= 0) ->
                      count ++;
-                fi
-         fi
+                fi;
+         fi;
     od
 }
 
@@ -86,7 +86,7 @@ proctype Philosopher(int n)
             :: else ->
              first = 0;
              second = NUM_PHILOSOPHERS - 1;
-        fi
+        fi;
 
         sem[first].proc!p(n);
         sem[first].proc?go(n);
@@ -116,11 +116,13 @@ init
 {
     atomic
     {
-        sem[0] = Semaphore(0, 1);
-        sem[1] = Semaphore(1, 1);
-        sem[2] = Semaphore(2, 1);
-        sem[3] = Semaphore(3, 1);
-        sem[4] = Semaphore(4, 1);
+        /*
+        sem[0] = run Semaphore(0, 1);
+        sem[1] = run Semaphore(1, 1);
+        sem[2] = run Semaphore(2, 1);
+        sem[3] = run Semaphore(3, 1);
+        sem[4] = run Semaphore(4, 1);
+        */
         
         run Philosopher(0);
         run Philosopher(1);
