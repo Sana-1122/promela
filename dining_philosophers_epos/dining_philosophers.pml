@@ -1,17 +1,22 @@
 /* Author: mateuskl - Mateus Krepsky Ludwich */
-#define iterations 100
+#define iterations 1
 #define NUM_SEMAPHORES 5
 #define NUM_PHILOSOPHERS 5
 #define MAX_SEMAPHORE_CAPACITY 5
 #define WAITING_QUEUE_SIZE 2 /* At most two philosophers can compete by the same chopstick, so the queue_size is 2. */
 
 /* Semaphore */
-typedef Semaphore_Channel
+#define SEM_OK 0
+#define WAITING_QUEUE_OVERFLOW 1
+#define WAITING_QUEUE_UNDERFLOW 2
+
+typedef Semaphore_Type
 {
     chan proc = [0] of { int, int };
+    int state = SEM_OK;
 };
 
-Semaphore_Channel sem[NUM_SEMAPHORES];
+Semaphore_Type sem[NUM_SEMAPHORES];
 
 #define p 16
 #define v 22
@@ -23,6 +28,8 @@ Semaphore_Channel sem[NUM_SEMAPHORES];
 proctype Semaphore(int id; int initial_value) 
 {
     assert(initial_value >= 0);
+
+    sem[id].state = SEM_OK;
     
     int waiting_queue[WAITING_QUEUE_SIZE];
     int queue_index = 0;
@@ -42,7 +49,8 @@ proctype Semaphore(int id; int initial_value)
                          :: (queue_index < WAITING_QUEUE_SIZE) ->
                           waiting_queue[queue_index] = process_id;
                           queue_index ++;
-                         :: else -> 
+                         :: else ->
+                          sem[id].state = WAITING_QUEUE_OVERFLOW;
                           printf("/nSemaphore waiting queue overflow!/n");
                      fi;
                 fi;
@@ -56,6 +64,7 @@ proctype Semaphore(int id; int initial_value)
                           sem[id].proc!go(waiting_queue[queue_index-1]);
                           queue_index --;
                          :: else ->
+                          sem[id].state = WAITING_QUEUE_UNDERFLOW;
                           printf("/nSemaphore underflow/n");
                      fi;
                     :: (count >= 0) ->
@@ -65,7 +74,17 @@ proctype Semaphore(int id; int initial_value)
     od
 }
 
-/* --- */
+
+/* ---- */
+
+/* Verification properties regarding Semaphores */
+ltl sem_safety_p0 { always ( sem[0].state == SEM_OK ) }
+ltl sem_safety_p1 { always ( sem[1].state == SEM_OK ) }
+ltl sem_safety_p2 { always ( sem[2].state == SEM_OK ) }
+ltl sem_safety_p3 { always ( sem[3].state == SEM_OK ) }
+ltl sem_safety_p4 { always ( sem[4].state == SEM_OK ) }
+
+/* ---- */
 
 /* Philosopher */
 #define THINKING 0
@@ -127,7 +146,7 @@ proctype Philosopher(int n)
 /* ---- */
 
 
-/* Verification properties */
+/* Verification properties regarding Philosophers and the application */
 ltl safety_p01 { always !( (phil_state[0] == EATING) && (phil_state[1] == EATING) ) }
 ltl safety_p02 { always !( (phil_state[1] == EATING) && (phil_state[2] == EATING) ) }
 ltl safety_p03 { always !( (phil_state[2] == EATING) && (phil_state[3] == EATING) ) }
