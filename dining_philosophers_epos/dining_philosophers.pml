@@ -116,13 +116,12 @@ init
 {
     atomic
     {
-        /*
-        sem[0] = run Semaphore(0, 1);
-        sem[1] = run Semaphore(1, 1);
-        sem[2] = run Semaphore(2, 1);
-        sem[3] = run Semaphore(3, 1);
-        sem[4] = run Semaphore(4, 1);
-        */
+        
+        run Semaphore(0, 1);
+        run Semaphore(1, 1);
+        run Semaphore(2, 1);
+        run Semaphore(3, 1);
+        run Semaphore(4, 1);
         
         run Philosopher(0);
         run Philosopher(1);

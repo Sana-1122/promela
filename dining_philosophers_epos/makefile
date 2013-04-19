@@ -6,7 +6,7 @@ all: run_simulation
 
 
 run_simulation:
-	spin $(MODEL).pml
+	spin -T $(MODEL).pml
 
 run_verifier: generate_verifier
 	./pan.elf
