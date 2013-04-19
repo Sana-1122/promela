@@ -128,25 +128,25 @@ proctype Philosopher(int n)
 
 
 /* Verification properties */
-ltl { always !( (phil_state[0] == EATING) && (phil_state[1] == EATING) ) }
-ltl { always !( (phil_state[1] == EATING) && (phil_state[2] == EATING) ) }
-ltl { always !( (phil_state[2] == EATING) && (phil_state[3] == EATING) ) }
-ltl { always !( (phil_state[3] == EATING) && (phil_state[4] == EATING) ) }
-ltl { always !( (phil_state[4] == EATING) && (phil_state[0] == EATING) ) }
+ltl safety_p01 { always !( (phil_state[0] == EATING) && (phil_state[1] == EATING) ) }
+ltl safety_p02 { always !( (phil_state[1] == EATING) && (phil_state[2] == EATING) ) }
+ltl safety_p03 { always !( (phil_state[2] == EATING) && (phil_state[3] == EATING) ) }
+ltl safety_p04 { always !( (phil_state[3] == EATING) && (phil_state[4] == EATING) ) }
+ltl safety_p05 { always !( (phil_state[4] == EATING) && (phil_state[0] == EATING) ) }
 
-ltl { (phil_state[0] == DONE) -> (ate_times[0] == iterations) }
-ltl { (phil_state[1] == DONE) -> (ate_times[1] == iterations) }
-ltl { (phil_state[2] == DONE) -> (ate_times[2] == iterations) }
-ltl { (phil_state[3] == DONE) -> (ate_times[3] == iterations) }
-ltl { (phil_state[4] == DONE) -> (ate_times[4] == iterations) }
+ltl fairness_p01 { (phil_state[0] == DONE) -> (ate_times[0] == iterations) }
+ltl fairness_p02 { (phil_state[1] == DONE) -> (ate_times[1] == iterations) }
+ltl fairness_p03 { (phil_state[2] == DONE) -> (ate_times[2] == iterations) }
+ltl fairness_p04 { (phil_state[3] == DONE) -> (ate_times[3] == iterations) }
+ltl fairness_p05 { (phil_state[4] == DONE) -> (ate_times[4] == iterations) }
 
-ltl { eventually ( (phil_state[0] == EATING) && (phil_state[2] == EATING) ) }
-ltl { eventually ( (phil_state[0] == EATING) && (phil_state[3] == EATING) ) }
-ltl { eventually ( (phil_state[1] == EATING) && (phil_state[3] == EATING) ) }
-ltl { eventually ( (phil_state[1] == EATING) && (phil_state[4] == EATING) ) }
-ltl { eventually ( (phil_state[2] == EATING) && (phil_state[4] == EATING) ) }
+ltl concurrency_p01 { eventually ( (phil_state[0] == EATING) && (phil_state[2] == EATING) ) }
+ltl concurrency_p02 { eventually ( (phil_state[0] == EATING) && (phil_state[3] == EATING) ) }
+ltl concurrency_p03 { eventually ( (phil_state[1] == EATING) && (phil_state[3] == EATING) ) }
+ltl concurrency_p04 { eventually ( (phil_state[1] == EATING) && (phil_state[4] == EATING) ) }
+ltl concurrency_p05 { eventually ( (phil_state[2] == EATING) && (phil_state[4] == EATING) ) }
 
-ltl { eventually ( (phil_state[0] == DONE) &&
+ltl termination { eventually ( (phil_state[0] == DONE) &&
                    (phil_state[1] == DONE) &&
                    (phil_state[2] == DONE) &&
                    (phil_state[3] == DONE) &&
