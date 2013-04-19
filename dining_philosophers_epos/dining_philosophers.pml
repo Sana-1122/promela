@@ -67,7 +67,15 @@ proctype Semaphore(int id; int initial_value)
 
 /* --- */
 
+/* Philosopher */
+#define THINKING 0
+#define EATING 1
+#define DONE 2
 
+int ate_times[NUM_PHILOSOPHERS];
+chan phil_done[NUM_PHILOSOPHERS] = [0] of { int };
+
+int phil_state[NUM_PHILOSOPHERS];
 
 proctype Philosopher(int n) 
 {
@@ -75,9 +83,13 @@ proctype Philosopher(int n)
     int second;
 
     int i;
-    for (i : 0 .. iterations)
+    for (i : 0 .. iterations - 1)
     {
-        printf("P%dT, ", n); /* thinking */
+        atomic
+        {
+            phil_state[n] = THINKING;
+            printf("P%dT, ", n); /* thinking */
+        }
 
         if
             :: (n < NUM_PHILOSOPHERS - 1) ->
@@ -93,19 +105,32 @@ proctype Philosopher(int n)
         sem[second].proc!p(n);
         sem[second].proc?go(n);        
 
-        printf("P%dE, ", n); /* eating */
+        atomic
+        {
+            phil_state[n] = EATING;
+            printf("P%dE, ", n); /* eating */
+        }
 
         sem[first].proc!v(n);
         sem[second].proc!v(n);
     }
-    
-    printf("\ndone\n");
-    printf("Philosopher %d ate %d times\n", n, i);
+
+    atomic
+    {
+        phil_state[n] = DONE;
+        /* printf("\ndone\n"); */
+        ate_times[n] = i;
+        phil_done[n]!DONE;
+    }
 }
 
-/*
-ltl { eventually(full_slot == BUF_SIZE) }
-*/
+/* ---- */
+
+
+/* Verification properties */
+ltl { always !( (phil_state[0] == EATING) && (phil_state[1] == EATING) ) }
+
+/* ---- */
 
 proctype Monitor()
 {
@@ -116,6 +141,12 @@ init
 {
     atomic
     {
+        int i;
+
+        for (i : 0 .. NUM_PHILOSOPHERS - 1)
+        {
+            phil_state[i] = THINKING;
+        }
         
         run Semaphore(0, 1);
         run Semaphore(1, 1);
@@ -130,6 +161,18 @@ init
         run Philosopher(4);
         
         run Monitor();
+
+        
+        
+        for (i : 0 .. NUM_PHILOSOPHERS - 1)
+        {
+            phil_done[i]?DONE;
+            atomic
+            {
+                printf("\nPhilosopher %d ate %d times\n", i, ate_times[i]);
+            }
+        }
+       
     }
 }
 
