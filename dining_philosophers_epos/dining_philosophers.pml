@@ -129,6 +129,28 @@ proctype Philosopher(int n)
 
 /* Verification properties */
 ltl { always !( (phil_state[0] == EATING) && (phil_state[1] == EATING) ) }
+ltl { always !( (phil_state[1] == EATING) && (phil_state[2] == EATING) ) }
+ltl { always !( (phil_state[2] == EATING) && (phil_state[3] == EATING) ) }
+ltl { always !( (phil_state[3] == EATING) && (phil_state[4] == EATING) ) }
+ltl { always !( (phil_state[4] == EATING) && (phil_state[0] == EATING) ) }
+
+ltl { (phil_state[0] == DONE) -> (ate_times[0] == iterations) }
+ltl { (phil_state[1] == DONE) -> (ate_times[1] == iterations) }
+ltl { (phil_state[2] == DONE) -> (ate_times[2] == iterations) }
+ltl { (phil_state[3] == DONE) -> (ate_times[3] == iterations) }
+ltl { (phil_state[4] == DONE) -> (ate_times[4] == iterations) }
+
+ltl { eventually ( (phil_state[0] == EATING) && (phil_state[2] == EATING) ) }
+ltl { eventually ( (phil_state[0] == EATING) && (phil_state[3] == EATING) ) }
+ltl { eventually ( (phil_state[1] == EATING) && (phil_state[3] == EATING) ) }
+ltl { eventually ( (phil_state[1] == EATING) && (phil_state[4] == EATING) ) }
+ltl { eventually ( (phil_state[2] == EATING) && (phil_state[4] == EATING) ) }
+
+ltl { eventually ( (phil_state[0] == DONE) &&
+                   (phil_state[1] == DONE) &&
+                   (phil_state[2] == DONE) &&
+                   (phil_state[3] == DONE) &&
+                   (phil_state[4] == DONE) )}
 
 /* ---- */
 
