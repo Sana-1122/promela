@@ -77,7 +77,7 @@ proctype Philosopher(int n)
     int i;
     for (i : 0 .. iterations)
     {
-        printf("thinking");
+        printf("P%dT, ", n); /* thinking */
 
         if
             :: (n < NUM_PHILOSOPHERS - 1) ->
@@ -93,14 +93,14 @@ proctype Philosopher(int n)
         sem[second].proc!p(n);
         sem[second].proc?go(n);        
 
-        printf("eating");
+        printf("P%dE, ", n); /* eating */
 
         sem[first].proc!v(n);
         sem[second].proc!v(n);
     }
     
     printf("\ndone\n");
-    printf("Philosopher %n ate %n times\n", n, i);
+    printf("Philosopher %d ate %d times\n", n, i);
 }
 
 /*
