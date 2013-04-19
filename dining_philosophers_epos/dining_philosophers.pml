@@ -31,7 +31,7 @@ proctype Semaphore(int id; int initial_value)
 
     do
         :: if
-               :: ( 99 /* sem[id].proc?p(process_id) */ ) ->                
+               :: sem[id].proc?p(process_id) ->                
                 if
                     :: (count > 0) ->
                      count --;
@@ -47,7 +47,7 @@ proctype Semaphore(int id; int initial_value)
                      fi;
                 fi;
              
-               :: ( 88 /* sem[id].proc?v(process_id) */ ) ->
+               :: sem[id].proc?v(process_id) ->
                 if
                     :: (count < 0) ->
                      count ++;
